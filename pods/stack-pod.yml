@@ -1,0 +1,38 @@
+---
+kind: Pod
+apiVersion: v1
+metadata:
+  name: stack
+  labels:
+    name: stack
+spec:
+  containers:
+  - name: mariadb
+    image: mariadb
+    ports:
+      - containerPort: 3306
+    env: 
+     - name: MYSQL_ROOT_PASSWORD
+       value: root
+  - name: tomcat
+    image: raghudevops32/tomcat:v1
+    ports:
+      - containerPort: 8080
+  - name: httpd
+    image: raghudevops32/httpd:v2
+    ports:
+      - containerPort: 80
+
+--- 
+kind: Service
+apiVersion: v1
+metadata:
+  name: stack
+spec:
+  type: LoadBalancer
+  selector:
+    name: stack
+  ports:
+  - port: 80  
+    targetPort: 80
+
