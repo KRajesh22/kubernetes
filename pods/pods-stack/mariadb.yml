@@ -1,0 +1,39 @@
+---
+kind: Pod
+apiVersion: v1
+metadata:
+  name: mariadb
+  labels:
+    name: mariadb
+spec:
+  containers:
+  - name: mariadb
+    image: mariadb
+    ports:
+      - containerPort: 3306
+    env:
+      - name: MYSQL_ROOT_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: db-pass
+            key: dbpass 
+    volumeMounts:
+    - mountPath: /var/lib/mysql
+      name: mariadb-volume
+  volumes:
+  - name: mariadb-volume
+    awsElasticBlockStore:
+      volumeID: vol-02d4cf001957da10c
+      fsType: ext4
+--- 
+kind: Service
+apiVersion: v1
+metadata:
+  name: mariadb
+spec:
+  selector:
+    name: mariadb
+  ports:
+  - name: db
+    port: 3306
+    targetPort: 3306
